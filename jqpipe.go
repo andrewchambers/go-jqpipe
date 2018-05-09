@@ -2,9 +2,7 @@
 	Wraps the "jq" utility as a pipe.
 
 	This package makes it easy for Go programs to filter JSON data using
-	stedolan's "jq". This is used internally at ThreatGRID as a sort of
-	expedient map/reduce in its distributed data store and in its "expectjq"
-	test utility.
+	stedolan's "jq".
 */
 package jq
 
@@ -88,9 +86,13 @@ func (p *Pipe) Next() (json.RawMessage, error) {
 		return nil, err
 	}
 
-	// terminate jq (if it hasn't died already)
-	p.jq.Process.Kill()
-	p.jq.Wait()
+	if err == io.EOF {
+		p.jq.Wait()
+	} else {
+		// terminate jq (if it hasn't died already)
+		p.jq.Process.Kill()
+		p.jq.Wait()
+	}
 
 	// if jq complained, that's our error
 	if p.stderr.Len() != 0 {
@@ -117,7 +119,7 @@ func (p *Pipe) Close() error {
 	}
 	if p.jq.Process != nil {
 		p.jq.Process.Kill()
-		go p.jq.Process.Wait()
+		p.jq.Process.Wait()
 	}
 	return nil
 }
