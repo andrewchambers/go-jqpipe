@@ -4,7 +4,7 @@
 	This package makes it easy for Go programs to filter JSON data using
 	stedolan's "jq".
 */
-package jq
+package jqpipe
 
 import (
 	"bytes"

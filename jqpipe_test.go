@@ -1,4 +1,4 @@
-package jq
+package jqpipe
 
 import (
 	"encoding/json"
